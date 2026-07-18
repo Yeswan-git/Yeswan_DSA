@@ -1,12 +1,11 @@
 class Solution:
     def generate(self, numRows: int) -> List[List[int]]:
         def row_generator(n):
-            row = []
+            row = [1]
             ans = 1
-            row.append(ans)
             for i in range(1 , n):
-                ans = ans * (n - i)
-                ans = ans // i
+                ans *= (n - i)
+                ans //= i
                 row.append(ans)
             return row
         
