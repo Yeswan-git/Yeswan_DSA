@@ -20,13 +20,11 @@ class Solution:
             else:
                 cnt1 -= 1
                 cnt2 -= 1
-        
         res = []
         cnt1 = cnt2 = 0
         for num in nums:
-            if num == el1: cnt1 += 1
-            elif num == el2: cnt2 += 1
-        
+            if num == el1 : cnt1 += 1
+            elif num == el2 : cnt2 += 1
         if cnt1 > n // 3 : res.append(el1)
         if cnt2 > n // 3 : res.append(el2)
 
