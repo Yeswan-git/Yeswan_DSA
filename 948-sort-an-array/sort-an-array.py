@@ -2,8 +2,8 @@ class Solution:
     def sortArray(self, nums: List[int]) -> List[int]:
         # Merge Sort
         def merge(arr , low , mid , high):
+            # [low ........... mid] , [mid + 1 .............. high]
             temp = []
-            # [low ......... mid] , [mid + 1 .............. high]
             l , r = low , mid + 1
             while l <= mid and r <= high:
                 if arr[l] <= arr[r]:
@@ -18,10 +18,9 @@ class Solution:
             while r <= high:
                 temp.append(arr[r])
                 r += 1
-            for i in range(low , high + 1):
-                arr[i] = temp[i - low]
+            arr[low : high + 1] = temp
         def ms(arr , low , high):
-            if low == high:return
+            if low == high : return 
             mid = low + (high - low) // 2
             ms(arr , low , mid)
             ms(arr , mid + 1 , high)
