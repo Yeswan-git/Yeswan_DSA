@@ -1,5 +1,6 @@
 class Solution:
     def sortArray(self, nums: List[int]) -> List[int]:
+        # Merge Sort
         def merge(arr , low , mid , high):
             temp = []
             # [low ......... mid] , [mid + 1 .............. high]
