@@ -1,29 +1,3 @@
 class Solution:
     def sortArray(self, nums: List[int]) -> List[int]:
-        # Merge Sort
-        def merge(arr , low , mid , high):
-            # [low ........... mid] , [mid + 1 .............. high]
-            temp = []
-            l , r = low , mid + 1
-            while l <= mid and r <= high:
-                if arr[l] <= arr[r]:
-                    temp.append(arr[l])
-                    l += 1
-                else:
-                    temp.append(arr[r])
-                    r += 1
-            while l <= mid:
-                temp.append(arr[l])
-                l += 1
-            while r <= high:
-                temp.append(arr[r])
-                r += 1
-            arr[low : high + 1] = temp
-        def ms(arr , low , high):
-            if low == high : return 
-            mid = low + (high - low) // 2
-            ms(arr , low , mid)
-            ms(arr , mid + 1 , high)
-            merge(arr , low , mid , high)
-        ms(nums , 0 , len(nums) - 1)
-        return nums
+        return sorted(nums)
