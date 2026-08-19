@@ -11,7 +11,7 @@ class Solution:
                     last = position[i]
             return ball_cnt >= m
         
-        l , r = 1 , 10 ** 9
+        l , r = 1 , max(position) - min(position)
         res = 1
         while l <= r :
             mid = l + (r - l) // 2
