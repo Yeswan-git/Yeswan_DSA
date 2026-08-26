@@ -1,6 +1,6 @@
+from math import ceil
 class Solution:
     def minMaxDist(self, arr , k):
-        from math import ceil
         n = len(arr)
         l = 0.0
         r = 0.0
@@ -13,11 +13,10 @@ class Solution:
                 gap = arr[i + 1] - arr[i]
                 placed += ceil(gap / max_val) - 1
             return placed <= k
-                
-                
         
         res = r
-        while r - l > 10 ** -6:
+        
+        while r - l > 1e-6 :
             mid = l + (r - l) / 2
             if can_we_place(mid):
                 res = mid
