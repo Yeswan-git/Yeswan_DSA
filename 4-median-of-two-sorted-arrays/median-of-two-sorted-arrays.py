@@ -19,10 +19,7 @@ class Solution:
         
         n = n1 + n2
         if n % 2 == 0:
-            index = (n - 1) // 2
-            n1 = nums[index]
-            n2 = nums[index + 1]
-            median = (n1 + n2) / 2
+            median = (nums[n // 2] + nums[n // 2 - 1]) / 2
         else:
             median = nums[n // 2]
 
