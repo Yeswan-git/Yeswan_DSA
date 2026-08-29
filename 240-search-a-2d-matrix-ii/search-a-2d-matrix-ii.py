@@ -9,4 +9,4 @@ class Solution:
                 c -= 1
             else:
                 r += 1
-        return
+        return False
