@@ -1,15 +1,15 @@
 class Solution:
     def removeOuterParentheses(self, s: str) -> str:
-        res = []
+        res = ""
         balance = 0
 
         for char in s :
             if char == "(":
                 if balance > 0 : 
-                    res.append(char)
+                    res += char
                 balance += 1
             else :
                 balance -= 1
                 if balance > 0 :
-                    res.append(char)
-        return "".join(res)
+                    res += char
+        return res
