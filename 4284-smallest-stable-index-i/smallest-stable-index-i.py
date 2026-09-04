@@ -7,9 +7,7 @@ class Solution:
         mins[n - 1] = nums[n - 1]
         for i in range(1 , n):
             maxs[i] = max(maxs[i - 1] , nums[i])
-        
-        for i in range(n - 2 , -1 , -1):
-            mins[i] = min(mins[i + 1] , nums[i])
+            mins[n - i - 1] = min(mins[n - i] , nums[n - i - 1])
         
         for i in range(n):
             if maxs[i] - mins[i] <= k :
