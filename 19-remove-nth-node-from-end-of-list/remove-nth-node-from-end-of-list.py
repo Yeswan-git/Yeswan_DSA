@@ -9,10 +9,10 @@ class Solution:
 
         slow = fast = dummy
 
-        for i in range(n + 1):
+        for i in range(n):
             fast = fast.next
         
-        while fast:
+        while fast.next:
             slow = slow.next
             fast = fast.next
         
