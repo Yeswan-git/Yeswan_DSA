@@ -7,31 +7,30 @@ class Node:
 	
 class Solution:
     def segregate(self, head):
-        if not head : return head
-        zeros = ones = twos = 0
+        l0 = Node(-1)
+        l1 = Node(-1)
+        l2 = Node(-1)
+        zero = l0
+        one = l1
+        two = l2
         curr = head
         
-        while curr :
+        while curr:
             if curr.data == 0 :
-                zeros += 1
-            elif curr.data == 1 :
-                ones += 1
-            else:
-                twos += 1
+                zero.next = curr
+                zero = zero.next
+            
+            elif curr.data == 1 : 
+                one.next = curr
+                one = one.next
+            
+            else :
+                two.next = curr
+                two = two.next
+            
             curr = curr.next
         
-        curr = head
-        
-        while zeros > 0:
-            curr.data = 0
-            curr = curr.next
-            zeros -= 1
-        while ones > 0 : 
-            curr.data= 1
-            curr = curr.next
-            ones -= 1
-        while twos > 0 :
-            curr.data = 2
-            curr = curr.next
-            twos -= 1
-        return head
+        zero.next = l1.next if l1.next else l2.next
+        one.next = l2.next
+        two.next = None
+        return l0.next
