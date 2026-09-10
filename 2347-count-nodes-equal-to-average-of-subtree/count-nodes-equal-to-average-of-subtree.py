@@ -6,9 +6,10 @@
 #         self.right = right
 class Solution:
     def averageOfSubtree(self, root: TreeNode) -> int:
-        res = [0]
+        res = 0
 
         def dfs(node):
+            nonlocal res
             if node is None :
                 return 0 , 0
             
@@ -19,9 +20,9 @@ class Solution:
             total_count = left_count + right_count + 1
 
             if total_sum // total_count == node.val :
-                res[0] += 1
+                res += 1
             
             return total_sum , total_count
         
         dfs(root)
-        return res[0]
+        return res
