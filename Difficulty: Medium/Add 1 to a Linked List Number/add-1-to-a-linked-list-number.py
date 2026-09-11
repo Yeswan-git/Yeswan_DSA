@@ -6,38 +6,25 @@ class Node:
 '''
 class Solution:
     def addOne(self,head):
-        def reverse(head):
-            curr = head
-            prev = None
+        def helper(node):
+            if node is None:
+                return 1
             
-            while curr :
-                temp = curr.next
-                curr.next = prev
-                prev = curr
-                curr = temp
+            carry = helper(node.next)
+            node.data = node.data + carry
+            if node.data < 10 :
+                return 0
             
-            return prev
+            else: 
+                node.data = 0
+                return 1
         
-        head = reverse(head)
-        carry = 1
         
         
-        curr = head
-        while curr :
-            total = carry + curr.data
-            if total <= 9 :
-                curr.data = total
-                carry = 0
-            else:
-                curr.data = 0
-                carry = 1
-            curr = curr.next
-        
-        head = reverse(head)
-        
+        carry = helper(head)
         if carry :
             new_node = Node(1)
             new_node.next = head
             head = new_node
-            
+        
         return head
