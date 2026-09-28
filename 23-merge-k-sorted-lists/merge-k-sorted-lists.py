@@ -32,8 +32,8 @@ class Solution:
         if len(lists) == 0:
             return None
         while len(lists) > 1:
-            l1 = lists.pop(0)
-            l2 = lists.pop(0)
+            l1 = lists.pop()
+            l2 = lists.pop()
             lists.append(merge(l1 , l2))
         
         return lists[0]
