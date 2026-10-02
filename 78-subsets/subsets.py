@@ -1,14 +1,12 @@
 class Solution:
     def subsets(self, nums: list[int]) -> list[list[int]]:
         n = len(nums)
-
         res , sol = [] , []
-
         def backtrack(i):
-            if i == n :
+            if i >= n:
                 res.append(sol[:])
-                return 
-                
+                return
+            
             # not pick
             backtrack(i + 1)
 
