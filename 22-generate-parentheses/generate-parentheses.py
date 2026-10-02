@@ -7,7 +7,7 @@ class Solution:
                 res.append("".join(sol))
                 return
             
-            if openn < n :
+            if openn < n:
                 sol.append("(")
                 backtrack(openn + 1 , close)
                 sol.pop()
@@ -18,4 +18,5 @@ class Solution:
                 sol.pop()
         
         backtrack(0 , 0)
+
         return res
