@@ -6,11 +6,10 @@ class Solution:
             if len(sol) == k:
                 res.append(sol[:])
                 return
+            if x == 0 :
+                return
             
-            left = x
-            still_need = k - len(sol)
-            if left > still_need:
-                backtrack(x - 1)
+            backtrack(x - 1)
             
             sol.append(x)
             backtrack(x - 1)
