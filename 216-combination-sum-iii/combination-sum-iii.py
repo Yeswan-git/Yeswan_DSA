@@ -3,7 +3,7 @@ class Solution:
         res , sol = [] , []
 
         def backtrack(i , curr_sum):
-            if curr_sum == n + 1 and len(sol) == k:
+            if curr_sum == n  and len(sol) == k:
                 res.append(sol[:])
                 return
             
@@ -16,5 +16,5 @@ class Solution:
             backtrack(i + 1 , curr_sum + i)
             sol.pop()
         
-        backtrack(1 , 1)
+        backtrack(1 , 0)
         return res
