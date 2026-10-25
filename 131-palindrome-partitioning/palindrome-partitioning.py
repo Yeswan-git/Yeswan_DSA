@@ -2,13 +2,11 @@ class Solution:
     def partition(self, s: str) -> list[list[str]]:
         n = len(s)
         res , sol = [] , []
+
+        @cache
         def isPalindrome(start , end):
-            while start <= end:
-                if s[start] != s[end]:
-                    return False
-                start += 1
-                end -= 1
-            return True
+            if start >= end: return True
+            return s[start] == s[end] and isPalindrome(start + 1 , end - 1)
         
         def backtrack(i):
             if i == n :
