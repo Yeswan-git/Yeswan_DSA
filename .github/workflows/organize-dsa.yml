@@ -1,0 +1,143 @@
+name: Organize DSA Problems
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  organize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Classify and organize DSA problems
+        run: |
+          python3 - <<'EOF'
+          import concurrent.futures
+          import json
+          import os
+          import re
+          import subprocess
+          import urllib.request
+
+          TOPIC_PRIORITY = [
+              ("Dynamic-Programming", {"Dynamic Programming", "Memoization"}),
+              ("Backtracking", {"Backtracking"}),
+              ("Trie", {"Trie"}),
+              ("Heap", {"Heap (Priority Queue)"}),
+              ("Graphs", {"Graph", "Breadth-First Search", "Depth-First Search", "Shortest Path", "Topological Sort", "Union Find", "Minimum Spanning Tree"}),
+              ("Trees", {"Tree", "Binary Tree", "Binary Search Tree", "Segment Tree", "Binary Indexed Tree"}),
+              ("Linked-List", {"Linked List", "Doubly-Linked List"}),
+              ("Binary-Search", {"Binary Search"}),
+              ("Sliding-Window", {"Sliding Window"}),
+              ("Two-Pointers", {"Two Pointers"}),
+              ("Stacks-and-Queues", {"Stack", "Queue", "Monotonic Stack", "Monotonic Queue"}),
+              ("Bit-Manipulation", {"Bit Manipulation", "Bitmask"}),
+              ("Matrix", {"Matrix"}),
+              ("Greedy", {"Greedy"}),
+              ("Sorting", {"Sorting", "Merge Sort", "Quickselect", "Counting Sort", "Bucket Sort", "Radix Sort"}),
+              ("Hashing", {"Hash Table", "Hash Function", "Rolling Hash"}),
+              ("Strings", {"String", "String Matching"}),
+              ("Math", {"Math", "Number Theory", "Combinatorics", "Geometry", "Counting", "Probability and Statistics"}),
+              ("Arrays", {"Array", "Prefix Sum", "Simulation"}),
+          ]
+
+          KEYWORD_FALLBACK = [
+              ("Linked-List", ["linked-list", "list-node", "copy-list", "sort-list", "reverse-nodes", "merge-k-sorted-lists", "merge-two-sorted-lists", "remove-nth-node", "delete-node", "add-two-numbers"]),
+              ("Trees", ["tree", "bst", "binary-tree", "inorder", "preorder", "postorder", "level-order", "lowest-common-ancestor"]),
+              ("Graphs", ["graph", "island", "course-schedule", "rotting-oranges", "word-ladder", "dijkstra", "shortest-path", "topological", "bipartite", "clone-graph", "province", "network-delay"]),
+              ("Dynamic-Programming", ["fibonacci", "climbing-stairs", "knapsack", "house-robber", "coin-change", "longest-increasing-subsequence", "longest-common-subsequence", "edit-distance", "partition-equal"]),
+              ("Backtracking", ["permutation", "combination", "subset", "n-queens", "sudoku", "palindrome-partitioning", "word-search", "letter-combinations", "generate-parentheses"]),
+              ("Binary-Search", ["binary-search", "search-in-rotated", "koko-eating", "magnetic-force", "kth-missing", "first-and-last-position", "peak-element", "sqrt", "median-of-two"]),
+              ("Sliding-Window", ["sliding-window", "longest-substring", "minimum-window", "max-consecutive-ones", "fruit-into-baskets"]),
+              ("Two-Pointers", ["two-sum", "3sum", "4sum", "container-with-most-water", "trapping-rain-water", "move-zeroes", "remove-duplicates", "sort-colors", "valid-palindrome"]),
+              ("Stacks-and-Queues", ["stack", "queue", "parentheses", "next-greater", "daily-temperatures", "largest-rectangle", "min-stack", "polish-notation", "asteroid"]),
+              ("Hashing", ["anagram", "isomorphic", "group-anagrams", "longest-consecutive", "subarray-sum-equals-k", "majority-element", "frequency"]),
+              ("Heap", ["kth-largest", "kth-smallest", "top-k", "median-from-data-stream", "heap"]),
+              ("Trie", ["trie", "prefix-tree", "word-dictionary"]),
+              ("Bit-Manipulation", ["bit", "xor", "single-number", "power-of-two", "counting-bits", "hamming"]),
+              ("Matrix", ["matrix", "spiral", "rotate-image", "set-matrix-zeroes", "search-a-2d"]),
+              ("Greedy", ["jump-game", "gas-station", "candy", "lemonade", "assign-cookies", "merge-intervals", "insert-interval"]),
+              ("Sorting", ["sort", "merge-sorted", "largest-number"]),
+              ("Strings", ["string", "palindrome", "roman-to-integer", "integer-to-roman", "longest-common-prefix", "reverse-words", "atoi"]),
+              ("Math", ["math", "prime", "pow", "factorial", "gcd", "happy-number", "pascals-triangle", "ugly-number", "excel-sheet"]),
+              ("Arrays", ["array", "subarray", "running-sum", "product-of-array", "maximum-product", "rotate-array", "missing-number", "stock"]),
+          ]
+
+          def fetch_tags(slug):
+              url = "https://leetcode.com/graphql"
+              payload = json.dumps({
+                  "query": "query questionTags($titleSlug: String!) { question(titleSlug: $titleSlug) { topicTags { name } } }",
+                  "variables": {"titleSlug": slug},
+              }).encode("utf-8")
+              req = urllib.request.Request(
+                  url,
+                  data=payload,
+                  headers={
+                      "Content-Type": "application/json",
+                      "User-Agent": "Mozilla/5.0",
+                      "Referer": "https://leetcode.com",
+                  },
+              )
+              try:
+                  with urllib.request.urlopen(req, timeout=8) as resp:
+                      data = json.loads(resp.read().decode("utf-8"))
+                      q = (data.get("data") or {}).get("question")
+                      if q and q.get("topicTags"):
+                          return {t["name"] for t in q["topicTags"]}
+              except Exception:
+                  pass
+              return set()
+
+          def classify_folder(folder):
+              slug = re.sub(r"^\d+-", "", folder)
+              tags = fetch_tags(slug)
+              if tags:
+                  for topic, tag_set in TOPIC_PRIORITY:
+                      if tags & tag_set:
+                          return topic
+              lower = folder.lower()
+              for topic, keywords in KEYWORD_FALLBACK:
+                  if any(kw in lower for kw in keywords):
+                      return topic
+              return "Misc"
+
+          folders = sorted(
+              d for d in os.listdir(".")
+              if os.path.isdir(d) and re.match(r"^\d+-", d)
+          )
+          print(f"Found {len(folders)} problem folders to classify.")
+
+          if folders:
+              with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
+                  results = list(pool.map(lambda f: (f, classify_folder(f)), folders))
+
+              for folder, topic in results:
+                  os.makedirs(topic, exist_ok=True)
+                  dest = os.path.join(topic, folder)
+                  if not os.path.exists(dest):
+                      subprocess.run(["git", "mv", folder, dest], check=True)
+                      print(f"Moved {folder} -> {dest}")
+
+          status = subprocess.check_output(["git", "status", "--porcelain"], text=True).strip()
+          if status:
+              subprocess.run(["git", "config", "user.name", "github-actions[bot]"], check=True)
+              subprocess.run(["git", "config", "user.email", "github-actions[bot]@users.noreply.github.com"], check=True)
+              subprocess.run(["git", "commit", "-m", "Organize DSA problems into topic folders [skip ci]"], check=True)
+              subprocess.run(["git", "push", "origin", "main"], check=True)
+              print("Committed and pushed organized structure to main.")
+          else:
+              print("No changes to commit.")
+          EOF
